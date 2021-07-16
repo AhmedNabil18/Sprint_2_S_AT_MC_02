@@ -23,7 +23,9 @@
  *                          Module Data Types                                  *
  *******************************************************************************/
 
-
+/*
+ * Data Type for GPT return status
+ */
 typedef enum
 {
 	GPT_STATUS_ERROR_NOK=0,
@@ -37,7 +39,7 @@ typedef enum
 }enuGpt_Status_t;
 
 /*
- * Data Type for Port initialization state
+ * Data Type for GPT state
  */
 typedef enum
 {
@@ -116,15 +118,14 @@ enuGpt_Status_t GptInit(void);
 /* Returns the remaining time until the target time is reached */
 //enuGpt_Status_t Gpt_GetTimeRemaining( u8Gpt_Channel_t Channel, u16Gpt_Value_t* pu16Value );
 
-/* Make this timer channel starts counting */
-//enuGpt_Status_t Gpt_StartTimer( u8Gpt_Channel_t Channel, u16Gpt_Value_t Value );
+/* Make this timer channel starts counting synchronous (Polling) */
 enuGpt_Status_t GptStart_Sync(u8Gpt_Channel_t ChannelId, u32Gpt_Value_t u16_Ticks);
 
+/* Make this timer channel starts counting Asynchronous (Interrupt) */
 enuGpt_Status_t GptStart_aSync(u8Gpt_Channel_t ChannelId, u32Gpt_Value_t u16_Ticks, pfGpt_CallBack_t CallBack);
 
 /* Stop this timer channel from counting */
 enuGpt_Status_t GptStop(u8Gpt_Channel_t ChannelId);
-//enuGpt_Status_t Gpt_StopTimer( u8Gpt_Channel_t Channel );
 
 /* Enables the interrupt notification for a channel (relevant in normal mode) */
 //enuGpt_Status_t Gpt_EnableNotification( u8Gpt_Channel_t Channel );
@@ -134,6 +135,8 @@ enuGpt_Status_t GptStop(u8Gpt_Channel_t ChannelId);
 
 /* Changes the state of the timer channel */
 //enuGpt_Status_t Gpt_StateChange(u8Gpt_Channel_t Channel, enuGpt_State_t State);
+
+
 /*******************************************************************************
  *                       External Variables                                    *
  *******************************************************************************/

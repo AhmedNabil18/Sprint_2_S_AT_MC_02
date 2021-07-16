@@ -11,7 +11,6 @@
  
  #include "Gpt.h"
 #include "..\ATMega32_Registers.h"
-#include "..\Dio Module\Dio.h"
 
 
 static void (*Gpt_Timer0_CallBackPtr)(void);
@@ -129,7 +128,7 @@ enuGpt_Status_t Gpt_GetTimeElapsed( u8Gpt_Channel_t Channel, u16Gpt_Value_t* pu1
 				   u16_Ticks - The target number of ticks the timer should count.
 * Parameters (inout): None
 * Parameters (out): None
-* Return value: None
+* Return value: enuGpt_Status_t - Returns the status of the function (if there is any error)
 * Description: Function to Start the Timer module counting from 0x00 until (u16_Ticks).
 ************************************************************************************/
 enuGpt_Status_t GptStart_Sync(u8Gpt_Channel_t ChannelId, u32Gpt_Value_t u16_Ticks)
@@ -184,7 +183,6 @@ enuGpt_Status_t GptStart_Sync(u8Gpt_Channel_t ChannelId, u32Gpt_Value_t u16_Tick
 			/* Wait for the overflow flag to be set */
 			while((GPT_TIFR_REG & (1<<GPT_TIFR_TOV0))==0);
 			/* Clear the overflow flag */
-			//GPT_TIFR_REG |= (1<<GPT_TIFR_TOV0);
 			REG_SET_BIT(GPT_TIFR_REG,GPT_TIFR_TOV0);
 			
 			for(u16_loopIndex=0; u16_loopIndex<u16_OVFCount; u16_loopIndex++)
@@ -192,11 +190,9 @@ enuGpt_Status_t GptStart_Sync(u8Gpt_Channel_t ChannelId, u32Gpt_Value_t u16_Tick
 				/* Wait for the overflow flag to be set */
 				while((GPT_TIFR_REG & (1<<GPT_TIFR_TOV0))==0);
 				/* Clear the overflow flag */
-				//GPT_TIFR_REG = (1<<GPT_TIFR_TOV0);
 				REG_SET_BIT(GPT_TIFR_REG,GPT_TIFR_TOV0);
 			}
 			/* Stop the clock from the timer */
-			//GPT_TCCR0_REG &= ~(7 << GPT_TCCR0_CS00);
 			REG_CLR_BIT(GPT_TCCR0_REG, GPT_TCCR0_CS00);
 			REG_CLR_BIT(GPT_TCCR0_REG, GPT_TCCR0_CS01);
 			REG_CLR_BIT(GPT_TCCR0_REG, GPT_TCCR0_CS02);
@@ -228,7 +224,7 @@ enuGpt_Status_t GptStart_Sync(u8Gpt_Channel_t ChannelId, u32Gpt_Value_t u16_Tick
 				   CallBack - Callback function for ISR to call
 * Parameters (inout): None
 * Parameters (out): None
-* Return value: None
+* Return value: enuGpt_Status_t - Returns the status of the function (if there is any error)
 * Description: Function to Start the Timer module counting from 0x00 until (u16_Ticks)
                and generate interrupt when OVF.
 ************************************************************************************/
@@ -280,7 +276,6 @@ enuGpt_Status_t GptStart_aSync(u8Gpt_Channel_t ChannelId, u32Gpt_Value_t u16_Tic
 			Gpt_Timer0_CallBackPtr=CallBack;
 			/* Start the clock with the given pre scaler */
 			GPT_TCCR0_REG = (Timers_Configurations[ChannelId].enuClock_Src) << GPT_TCCR0_CS00;
-			Dio_writePin(DioConf_LED_PIN2_ID_INDEX,PIN_HIGH);
 			/* Run the remainder ticks */
 			/* Put the value of the 0xFF - remainderTicks to start count from it */
 			if(u16_remainderCount != 0)
@@ -370,6 +365,16 @@ enuGpt_Status_t GptStop( u8Gpt_Channel_t ChannelId )
 	return GPT_STATUS_ERROR_OK;
 }
 
+/************************************************************************************
+* Service Name: Gpt_ISRHandler
+* Sync/Async: ASynchronous
+* Reentrancy: Non Reentrant
+* Parameters (in): Timer_id - The Timer number.
+* Parameters (inout): None
+* Parameters (out): None
+* Return value: None
+* Description: Function to handle the ISR calling along with the callback functions.
+************************************************************************************/
 static void Gpt_ISRHandler(u8Gpt_Channel_t Timer_id)
 {
 	uint8_t u8_loopIndex = 0;
