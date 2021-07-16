@@ -128,7 +128,7 @@ enuGpt_Status_t Gpt_GetTimeElapsed( u8Gpt_Channel_t Channel, u16Gpt_Value_t* pu1
 				   u16_Ticks - The target number of ticks the timer should count.
 * Parameters (inout): None
 * Parameters (out): None
-* Return value: None
+* Return value: enuGpt_Status_t - Returns the status of the function (if there is any error)
 * Description: Function to Start the Timer module counting from 0x00 until (u16_Ticks).
 ************************************************************************************/
 enuGpt_Status_t GptStart_Sync(u8Gpt_Channel_t ChannelId, u32Gpt_Value_t u16_Ticks)
@@ -224,7 +224,7 @@ enuGpt_Status_t GptStart_Sync(u8Gpt_Channel_t ChannelId, u32Gpt_Value_t u16_Tick
 				   CallBack - Callback function for ISR to call
 * Parameters (inout): None
 * Parameters (out): None
-* Return value: None
+* Return value: enuGpt_Status_t - Returns the status of the function (if there is any error)
 * Description: Function to Start the Timer module counting from 0x00 until (u16_Ticks)
                and generate interrupt when OVF.
 ************************************************************************************/
@@ -365,6 +365,16 @@ enuGpt_Status_t GptStop( u8Gpt_Channel_t ChannelId )
 	return GPT_STATUS_ERROR_OK;
 }
 
+/************************************************************************************
+* Service Name: Gpt_ISRHandler
+* Sync/Async: ASynchronous
+* Reentrancy: Non Reentrant
+* Parameters (in): Timer_id - The Timer number.
+* Parameters (inout): None
+* Parameters (out): None
+* Return value: None
+* Description: Function to handle the ISR calling along with the callback functions.
+************************************************************************************/
 static void Gpt_ISRHandler(u8Gpt_Channel_t Timer_id)
 {
 	uint8_t u8_loopIndex = 0;
