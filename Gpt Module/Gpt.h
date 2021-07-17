@@ -19,6 +19,14 @@
 #include "Gpt_Symbols.h"
 #include "..\Platform_Types.h"
 #include "..\ATMega32_Interrupts.h"
+
+/*******************************************************************************
+ *                                 MACROS                                      *
+ *******************************************************************************/
+#define GPT_MAX_VALUE_8BIT      (u32Gpt_Value_t)0xFF
+#define GPT_MAX_VALUE_16BIT		(u32Gpt_Value_t)0xFFFF
+
+
 /*******************************************************************************
  *                          Module Data Types                                  *
  *******************************************************************************/
@@ -31,6 +39,7 @@ typedef enum
 	GPT_STATUS_ERROR_NOK=0,
 	GPT_STATUS_ERROR_OK,
 	GPT_STATUS_ERROR_NOT_INIT,
+	GPT_STATUS_ERROR_ALREADY_INIT,
 	GPT_STATUS_ERROR_NULL_ARG,
 	GPT_STATUS_ERROR_INVALID_TIMER_NUM,
 	GPT_STATUS_ERROR_INVALID_TIMER_ID,
@@ -84,6 +93,9 @@ typedef enum
 	GPT_CLK_SRC_PRSCLR_EXT_RISE
 }enuGpt_ClockSource_t;
 
+/*
+ * Data Type for the The modes of the channel
+ */
 typedef enum
 {
 	GPT_CH_MODE_NORMAL=0,
@@ -94,8 +106,6 @@ typedef enum
 }enuGpt_ChannelMode_t;
 /*
  * Data Type for configurations of a timer's channel
- * Member 1. The timer channel's id in the mcu
- * Member 2. The clock source and prescaler selection
  */
 typedef struct
 {
@@ -112,12 +122,6 @@ typedef struct
 //enuGpt_Status_t Gpt_Init( const strGpt_ChannelConfig_t* ConfigPtr );
 enuGpt_Status_t GptInit(void);
 
-/* Returns the elapsed time from the current period */
-//enuGpt_Status_t Gpt_GetTimeElapsed( u8Gpt_Channel_t Channel, u16Gpt_Value_t* pu16Value );
-
-/* Returns the remaining time until the target time is reached */
-//enuGpt_Status_t Gpt_GetTimeRemaining( u8Gpt_Channel_t Channel, u16Gpt_Value_t* pu16Value );
-
 /* Make this timer channel starts counting synchronous (Polling) */
 enuGpt_Status_t GptStart_Sync(u8Gpt_Channel_t ChannelId, u32Gpt_Value_t u16_Ticks);
 
@@ -126,6 +130,13 @@ enuGpt_Status_t GptStart_aSync(u8Gpt_Channel_t ChannelId, u32Gpt_Value_t u16_Tic
 
 /* Stop this timer channel from counting */
 enuGpt_Status_t GptStop(u8Gpt_Channel_t ChannelId);
+
+
+/* Returns the elapsed time from the current period */
+//enuGpt_Status_t Gpt_GetTimeElapsed( u8Gpt_Channel_t Channel, u16Gpt_Value_t* pu16Value );
+
+/* Returns the remaining time until the target time is reached */
+//enuGpt_Status_t Gpt_GetTimeRemaining( u8Gpt_Channel_t Channel, u16Gpt_Value_t* pu16Value );
 
 /* Enables the interrupt notification for a channel (relevant in normal mode) */
 //enuGpt_Status_t Gpt_EnableNotification( u8Gpt_Channel_t Channel );
@@ -142,11 +153,7 @@ enuGpt_Status_t GptStop(u8Gpt_Channel_t ChannelId);
  *******************************************************************************/
 extern const strGpt_ChannelConfig_t Timers_Configurations[GPT_CONFIGURED_CHANNELS] ;
 
-/*******************************************************************************
- *                                 MACROS                                      *
- *******************************************************************************/
-#define GPT_MAX_VALUE_8BIT      (u32Gpt_Value_t)0xFF
-#define GPT_MAX_VALUE_16BIT		(u32Gpt_Value_t)0xFFFF
+
 
 
 #endif
